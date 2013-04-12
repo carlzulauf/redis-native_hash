@@ -5,6 +5,7 @@ describe Redis::NativeHash do
     @hash = Redis::NativeHash.new :test
     @hash.update("foo" => "bar")
     @hash.save
+    @redis = @hash.redis
   end
 
   describe "#save" do
@@ -134,9 +135,15 @@ describe Redis::NativeHash do
     end
   end
 
+  describe "#clear" do
+    it "should clear all values from the hash immediately" do
+      @hash.clear
+      @redis.hget( @hash.redis_key, "foo" ).should be_nil
+    end
+  end
+
 
   after :each do
     @hash.destroy
   end
 end
-

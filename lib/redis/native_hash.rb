@@ -21,6 +21,13 @@ class Redis
       track!
     end
 
+    alias_method :empty!, :clear
+    def clear
+      empty!
+      untrack!
+      redis.del( redis_key )
+    end
+
     def []=(key, value)
       super(convert_key(key), value)
     end
@@ -101,7 +108,7 @@ class Redis
     end
 
     def replace(other_hash)
-      clear
+      empty
       update(other_hash)
     end
 
@@ -112,8 +119,6 @@ class Redis
     alias_method :reload, :reload!
 
     def destroy
-      redis.del( redis_key )
-      untrack!
       clear
       self.key = nil
     end
@@ -189,4 +194,3 @@ class Redis
     end
   end
 end
-
